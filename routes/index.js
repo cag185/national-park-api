@@ -22,4 +22,34 @@ router.get("/", function (req, res, next) {
   res.json({ message: "Welcome to the API!" });
 });
 
+// Route to push a new login attempt.
+router.post("/login", function (req, res) {
+  // Simulate a login attempt
+  const { username, password } = req.body;
+
+  if (username === "admin" && password === "password") {
+    res.json({ message: "Login successful!" });
+  } else {
+    res.status(401).json({ error: "Invalid login creditials. Try again..." });
+  }
+});
+
+router.post("/login-attempts", function (req, res) {
+  const { username } = req.body;
+
+  if (!username) {
+    return res.status(400).json({ error: "Invalid request data." });
+  }
+
+  // Simulate storing the login attempt
+  const loginAttempt = {
+    id: Date.now(),
+    username,
+    timestamp: new Date(),
+  };
+
+  // For now, just return the login attempt as a response
+  res.status(201).json({ message: "Login attempt recorded.", loginAttempt });
+});
+
 module.exports = router;
