@@ -6,8 +6,6 @@ var router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const app = express();
-
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.json({ message: "Welcome to the API!" });
@@ -24,25 +22,46 @@ router.get("/users", async (req, res) => {
   }
 });
 
+// Get User. @TODO.
+
 // POST /users
-router.put("/users/:id", async (req, res) => {
-  const { id } = req.params;
+router.post("/users", async (req, res) => {
   const { firstName, lastName, emailAddress } = req.body;
 
-  // enforce required fields.
+  // Enforce required fields
   if (!firstName || !lastName || !emailAddress) {
-    return res.status(400).json({ error: "Required fields was not provided" });
+    return res.status(400).json({ error: "Required fields were not provided" });
   }
 
+  // @TODO - validate that email and name combination is not currently in use.
+
   try {
-    const user = await prisma.user.update({
-      where: { id: parseInt(id) },
-      data: { firstName, lastName, emailAddress },
+    const user = await prisma.user.create({
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+        email_address: emailAddress,
+      },
     });
 
+    res.status(201).json(user);
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+// DELETE users route
+router.delete("/users/", async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    const user = await prisma.user.delete({
+      where: { id: parseInt(id, 10) },
+    });
     res.json(user);
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.error("Error deleting user:", error);
     res.status(500).json({ error: "Database error" });
   }
 });
