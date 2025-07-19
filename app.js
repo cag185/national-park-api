@@ -12,7 +12,8 @@ app.use(express.json());
 
 // Routes
 app.use("/", indexRouter);
-app.use("/users", userRouter);
+// @TODO ADD THE USER ENDPOINTS TO USER.JS
+// app.use("/users", userRouter);
 
 // 404 handler
 app.use((req, res, next) => {
@@ -25,8 +26,9 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log("Server running on http://localhost:${PORT}");
 });
 
 module.exports = app;
