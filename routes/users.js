@@ -41,4 +41,34 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// CREATE a new user (POST)
+router.post("/", async (req, res) => {
+  const { firstName, lastName, email } = req.body;
+
+  // enforce required fields.
+  if (!firstName || !lastName || !email) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "Required fields 'firstName', 'lastName', and 'email' were not provided",
+      });
+  }
+
+  try {
+    const [result] = await db.query(
+      "INSERT INTO test_table (name) VALUES (?)",
+      [name]
+    );
+
+    res.status(201).json({
+      message: "User created successfully",
+      userId: result.insertId,
+    });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 module.exports = router;
