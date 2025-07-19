@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const indexRouter = require("./routes/index");
+const userRouter = require("./routes/users");
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 // Routes
 app.use("/", indexRouter);
+app.use("/users", userRouter);
 
 // 404 handler
 app.use((req, res, next) => {
@@ -21,6 +23,10 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({ error: err.message });
+});
+
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
 });
 
 module.exports = app;
