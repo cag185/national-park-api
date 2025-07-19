@@ -7,7 +7,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const app = express();
-app.use(express.json());
 
 /* GET home page. */
 router.get("/", function (req, res, next) {

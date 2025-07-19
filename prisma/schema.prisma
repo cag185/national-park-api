@@ -14,6 +14,9 @@ model users {
   email_address String?   @db.VarChar(255)
   date_created  DateTime @default(now()) @db.Timestamp(0)
   profile Profile?
+
+    @@map("users")
+
 }
 
 model Profile {
