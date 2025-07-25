@@ -13,7 +13,7 @@ app.use(express.json());
 // Routes
 app.use("/", indexRouter);
 // @TODO ADD THE USER ENDPOINTS TO USER.JS
-// app.use("/users", userRouter);
+app.use("/users/", userRouter);
 
 // 404 handler
 app.use((req, res, next) => {
