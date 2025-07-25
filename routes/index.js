@@ -28,14 +28,54 @@ router.get("/users", async (req, res) => {
 router.post("/users", async (req, res) => {
   const { firstName, lastName, emailAddress } = req.body;
 
-  // Enforce required fields
-  if (!firstName || !lastName || !emailAddress) {
-    return res.status(400).json({ error: "Required fields were not provided" });
+  const errors = [];
+
+  // Required field validation
+  if (!firstName) {
+    errors.push("Required field 'firstName' was not provided");
+  }
+  if (!lastName) {
+    errors.push("Required field 'lastName' was not provided");
+  }
+  if (!emailAddress) {
+    errors.push("Required field 'emailAddress' was not provided");
   }
 
-  // @TODO - validate that email and name combination is not currently in use.
+  // Early return if basic validation fails
+  if (errors.length > 0) {
+    return res.status(400).json({ errors });
+  }
 
   try {
+    // Email uniqueness check — make sure the field matches your schema (likely `email_address`)
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        email_address: emailAddress,
+      },
+    });
+
+    if (existingUser) {
+      errors.push("Email address already in use");
+    }
+
+    // First + Last name combo check — also make sure field names match schema
+    const existingNameCombo = await prisma.user.findFirst({
+      where: {
+        first_name: firstName,
+        last_name: lastName,
+      },
+    });
+
+    if (existingNameCombo) {
+      errors.push(`${firstName} ${lastName} already has an account.`);
+    }
+
+    // Early return if logical validation fails
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
+    }
+
+    // Proceed to create user
     const user = await prisma.user.create({
       data: {
         first_name: firstName,
@@ -47,7 +87,7 @@ router.post("/users", async (req, res) => {
     res.status(201).json(user);
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({ errors: ["Internal server error."] });
   }
 });
 

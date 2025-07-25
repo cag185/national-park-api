@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  first_name    String?   @db.VarChar(255)
-  last_name     String?   @db.VarChar(255)
-  email_address String?   @db.VarChar(255)
+  id            Int      @id @default(autoincrement())
+  first_name    String?  @db.VarChar(255)
+  last_name     String?  @db.VarChar(255)
+  email_address String?  @db.VarChar(255)
+  password      String?  @db.VarChar(255)
   date_created  DateTime @default(now()) @db.Timestamp(0)
-  profile Profile?
+  profile       Profile?
 
-    @@map("users")
-
+  @@map("users")
 }
 
 model Profile {
