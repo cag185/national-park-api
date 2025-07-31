@@ -8,4 +8,4 @@ the project has been dockerized using docker-compose so building up the box shou
 1. docker install
 2. docker-compose up
 
-   The API is deployed on Render as a hosting service and using tiDBCloud for hosting the mySQL db
+The API is deployed on Render as a hosting service and using tiDBCloud for hosting the mySQL db
