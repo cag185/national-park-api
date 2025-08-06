@@ -20,7 +20,47 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get User. @TODO.
+// Get User. /id
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id, 10) },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user with ID:", id, error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+// Get User by Email
+router.get("/email/:emailAddress", async (req, res) => {
+  const { emailAddress } = req.params;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email_address: emailAddress },
+    });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "User not found with Email Address: ", emailAddress });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user with email:", emailAddress, error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
 
 // POST /users
 router.post("/", async (req, res) => {
