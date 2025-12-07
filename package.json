@@ -1,10 +1,10 @@
 {
   "name": "national-park-api",
-  "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "NODE_ENV=production node ./bin/www",
-    "dev": "NODE_ENV=development node app.js"
+    "dev": "NODE_ENV=development node app.js",
+    "debug": "node --inspect=0.0.0.0:9229 ./bin/www"
   },
   "dependencies": {
     "@prisma/client": "^6.12.0",

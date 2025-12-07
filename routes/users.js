@@ -21,12 +21,14 @@ router.get("/", async (req, res) => {
 });
 
 // Get User. /id
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-
+router.get("/id", async (req, res) => {
   try {
+    const { id } = req.params;
+
+    const parsedId = parseInt(id, 10);
+
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(id, 10) },
+      where: { id: parsedId },
     });
 
     if (!user) {
@@ -41,12 +43,20 @@ router.get("/:id", async (req, res) => {
 });
 
 // Get User by Email
-router.get("/email/:emailAddress", async (req, res) => {
-  const { emailAddress } = req.params;
-
+router.get("/email", async (req, res) => {
   try {
+    const { emailAddress } = req.params;
+
+    if (!emailAddress) {
+      console.error("Email address is null or undefined in request params");
+      // Optionally, you can send a warning response, but do not break the build
+      // return res.status(400).json({ error: "Email address is required" });
+    }
+
+    const emailString = emailAddress ? emailAddress.toString() : "";
+
     const user = await prisma.user.findUnique({
-      where: { email_address: emailAddress },
+      where: { email_address: emailString },
     });
 
     if (!user) {
@@ -57,7 +67,11 @@ router.get("/email/:emailAddress", async (req, res) => {
 
     res.json(user);
   } catch (error) {
-    console.error("Error fetching user with email:", emailAddress, error);
+    console.error(
+      "Error fetching user with email:",
+      req.params.emailAddress,
+      error
+    );
     res.status(500).json({ error: "Database error" });
   }
 });
@@ -140,7 +154,7 @@ router.post("/", async (req, res) => {
 });
 
 // GET valid login route
-router.get("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   const { emailAddress, password } = req.body;
   const errors = [];
   // Required field validation
@@ -149,6 +163,10 @@ router.get("/login", async (req, res) => {
   }
   if (!password) {
     errors.push("Required field 'password' was not provided");
+  }
+
+  if (errors.length) {
+    return res.status(400).json({ errors });
   }
 
   // compare the encrypted plaintext password with the stored hash.
@@ -213,7 +231,7 @@ async function comparePassword(password, hash) {
     }
   } catch (error) {
     console.error("Error comparing password:", error);
-    throw new Error("Password comparison failed");
+    return false;
   }
 }
 module.exports = router;
